@@ -1,0 +1,47 @@
+---
+title: "Seminar 03b"
+author: "Olivia"
+date: "Tuesday, February 03, 2015"
+output:
+  html_document:
+    keep_md: yes
+---
+Seminar outline: 
+The full photoRec dataset has 39 samples and 29,949 probesets. Choose 2 . or 20 . or 200 random probesets/genes and look for gene expression differences between the two genotypes, wild type versus knockout. Make use of the graphing techniques discussed this week such as scatter plots, box plot, etc. 
+
+First setting up for the subsequent graphs. 
+
+```{r}
+library(ggplot2)
+kDat <- read.table("GSE4051_data.tsv")
+str(kDat)
+kDes <- readRDS("GSE4051_design.rds")
+str(kDes)
+set.seed(1)
+```
+
+Now selecting a random set of 20 probesets. 
+
+```{r}
+samp <- sample(1:nrow(kDat), size = 20)
+samDat <- kDat[samp, ]
+str(samDat)
+sDat <- with(kDes, data.frame(sidChar, sidNum, devStage, gType, probeset = factor(rep(rownames(samDat), each = nrow(kDes))), geneExp = as.vector(t(as.matrix(samDat)))))
+str(sDat)
+```
+
+Now that everything is set up, let's look at the gene expression difference between WT and KO for the 200 ramdom probsets in various graphs. First, let's try plotting a stripplot. 
+
+```{r}
+(p <- ggplot(sDat, aes(x= devStage ,y= geneExp, color = gType)) + geom_point() + stat_summary(fun.y = mean, geom = "point", shape = 4, size = 4))
+```
+
+As one can see, the stripplot does not seem to be very informative. Let's try plotting a box plot instead. We can make one boxplot for each of the 20 probes that was randomly seleted in the begining.  
+
+```{r}
+ggplot(sDat, aes(devStage, geneExp, color = gType)) + geom_boxplot()  + facet_wrap(~ probeset, ncol=5) + stat_summary(fun.y = mean, geom = "point", shape = 4, size = 4)
+```
+
+With the boxplot, one can see clearly that there are differential expression at different probes in relation to the develop stage of samples. Thus it seems that a box plot is a good representation to see differential gene expression in a small random samples size. 
+
+
