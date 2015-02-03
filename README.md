@@ -9,8 +9,7 @@ Group project details
 
 Seminars
 --------
--[seminar1](url)
--[seminar2](url)
+-[seminar02b](https://github.com/wongoli/OliviaRepository/blob/master/seminar02b.md)
 
 Homework
 ---------
