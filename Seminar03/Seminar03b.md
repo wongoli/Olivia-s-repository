@@ -1,6 +1,5 @@
 # Seminar 03b
-Olivia  
-Tuesday, February 03, 2015  
+
 Seminar outline: 
 The full photoRec dataset has 39 samples and 29,949 probesets. Choose 2 . or 20 . or 200 random probesets/genes and look for gene expression differences between the two genotypes, wild type versus knockout. Make use of the graphing techniques discussed this week such as scatter plots, box plot, etc. 
 
