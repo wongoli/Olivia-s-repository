@@ -1,0 +1,59 @@
+---
+title: "Seminar 03c"
+output:
+  html_document:
+    keep_md: yes
+---
+This portion of the seminar works on graphing techniques using "lattice" instead of "ggplot2" in 3b. 
+Again, let us begin by first setting up as we did in seminar 03b. 
+
+```{r}
+library(lattice)
+prDat  <- read.table("GSE4051_data.tsv")
+prDes <- readRDS("GSE4051_design.rds")
+
+```
+
+The seminar outline from the website is as follows:
+"The full photoRec dataset has 39 samples and 29949 probesets. Using Lattice, choose 2 … or 20 … or 200 random probesets/genes and look for gene expression differences between the two genotypes, wild type versus knockout. Make use of the graphing techniques discussed this week such as scatter plots, data heatmaps, correlation heatmaps, etc. Share questions, success, failure on the Github-based discussion forum."
+
+As in seminar 03b I have looked at 20 random probsets, in this seminar I will look at 50 random probsets instead. The higher number of probsets may also make the heatmaps seem more reasonable. 
+
+First let's make R define the random 50 probesets for us. 
+```{r}
+set.seed(1)
+samp <- sample(1:nrow(prDat), size = 50)
+nDat <- prDat[samp, ]
+str(nDat)
+sDat <- with(prDes, data.frame(sidChar, sidNum, devStage, gType, probeset = factor(rep(rownames(nDat), each = nrow(prDes))), geneExp = as.vector(t(as.matrix(nDat)))))
+str(sDat)
+```
+
+As the seminar outline suggested, I am going to first try to plot the data as a scatter plot. 
+```{r}
+xyplot(geneExp ~ probeset , sDat, groups = gType, auto.key = TRUE)
+```
+
+As one can see, the presentation of the sample data set via a scatter plot (which resembles a stripplot), is not very informative. It seems much more intuitative to visualize the data via a heatmap but first we would have to transform the dataframe into a matrix as shown below.
+
+```{r}
+nDat <- as.matrix(t(nDat)) 
+rownames(nDat) <- with(prDes, paste(devStage, gType, sidChar, sep="_"))
+str(nDat)
+```
+
+Now that the data is in matrix format, let's make a basic heatmap!
+
+```{r}
+library(RColorBrewer)
+YelBl <- colorRampPalette(brewer.pal(n = 9, "YlGnBu"))
+heatmap(nDat, margins = c(5, 8), col = YelBl(1950))
+```
+
+From this particular heatmap, it does not really help with the visualization of the data. Also note that it is harder now to compare the effects of genotype on expression as the heat map  Let's refine the heatmap to try and make a correlation heatmap using the heatmap function again! 
+```{r}
+heatmap(cor(nDat), margins = c(5,8), col = YelBl(1950))
+```
+
+Note that although this heatmap shows a correlation between the groups, a careful look will reveal the fact that the heatmap only depicts a correlation between the randomly selected probesets! I have yet to figure out how to show the correlation between genotype and gene expression at various probesets...
+
